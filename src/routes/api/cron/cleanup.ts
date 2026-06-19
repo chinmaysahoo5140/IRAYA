@@ -1,23 +1,18 @@
-// Hourly + daily security cleanup. Called by pg_cron.
-//   apikey header = Supabase anon key (standard pattern, see schedule-jobs-options)
-//
-// Hourly: prune rate_limits + idempotency_keys
-// Daily : prune login_attempts (>90d), login_events (>180d), security_events (>180d)
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/api/cron/cleanup")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-      // SECURITY: This endpoint is protected by a dedicated secret that is NOT
-      // the public anon key (which ships in the browser bundle via VITE_*).
-      // Set CRON_SECRET to a strong, private random value (e.g. openssl rand -hex 64)
-      // in your server environment / Cloudflare Workers secrets — never in .env source control.
-      const cronSecret = request.headers.get("x-cron-secret");
-      const expected = process.env.CRON_SECRET;
-      if (!expected || cronSecret !== expected) {
-        return new Response("Unauthorized", { status: 401 });
-      }
+        // SECURITY: This endpoint is protected by a dedicated secret that is NOT
+        // the public anon key (which ships in the browser bundle via VITE_*).
+        // Set CRON_SECRET to a strong, private random value (e.g. openssl rand -hex 64)
+        // in your server environment / Cloudflare Workers secrets — never in .env source control.
+        const cronSecret = request.headers.get("x-cron-secret");
+        const expected = process.env.CRON_SECRET;
+        if (!expected || cronSecret !== expected) {
+          return new Response("Unauthorized", { status: 401 });
+        }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 

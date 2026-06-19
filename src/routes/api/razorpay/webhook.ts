@@ -1,10 +1,3 @@
-// Razorpay webhook receiver. Verifies HMAC-SHA256 signature, logs every
-// event to payment_events, and marks the order paid on payment.captured.
-//
-// Configure in Razorpay dashboard:
-//   URL:    https://irayaglobal.com/api/public/razorpay/webhook
-//   Events: payment.captured, payment.failed, order.paid
-//   Secret: store as RAZORPAY_WEBHOOK_SECRET in project secrets.
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
 

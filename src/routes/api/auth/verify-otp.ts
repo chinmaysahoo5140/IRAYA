@@ -6,7 +6,7 @@ export const Route = createFileRoute("/api/auth/verify-otp")({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const { twilioClient, TWILIO_VERIFY_SERVICE_SID } = await import("@/lib/twilio");
+          const { twilioClient, TWILIO_VERIFY_SERVICE_SID } = await import(/* @vite-ignore */ "@/lib/twilio");
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           const {
             getClientIp,

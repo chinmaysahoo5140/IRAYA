@@ -5,7 +5,7 @@ export const Route = createFileRoute("/api/auth/send-otp")({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const { twilioClient, TWILIO_VERIFY_SERVICE_SID } = await import("@/lib/twilio");
+          const { twilioClient, TWILIO_VERIFY_SERVICE_SID } = await import(/* @vite-ignore */ "@/lib/twilio");
           const { getClientIp, checkRateLimit } = await import("@/lib/security.server");
 
           let body;
