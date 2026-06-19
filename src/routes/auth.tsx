@@ -142,15 +142,17 @@ function AuthPage() {
     e.preventDefault();
     setBusy(true);
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: phoneVal,
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phoneVal }),
       });
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success("OTP sent successfully to " + phoneVal);
-        setOtpStep("code");
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to send OTP");
       }
+      toast.success("OTP sent successfully to " + phoneVal);
+      setOtpStep("code");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to send OTP");
     } finally {
@@ -164,17 +166,18 @@ function AuthPage() {
     try {
       const fd = new FormData(e.currentTarget);
       const code = String(fd.get("code"));
-      const { error } = await supabase.auth.verifyOtp({
-        phone: phoneVal,
-        token: code,
-        type: "sms",
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phoneVal, code }),
       });
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success("Authenticated successfully!");
-        after();
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to verify OTP");
       }
+      toast.success("Authenticated successfully!");
+      await router.invalidate();
+      after();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to verify OTP");
     } finally {
