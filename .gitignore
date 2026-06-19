@@ -1,0 +1,14 @@
+.env
+.env.local
+.env.production
+.env.development
+node_modules/
+node_modules
+dist/
+build/
+.vercel/
+*.log
+.DS_Store
+.output/
+.tanstack/
+.vercel/
