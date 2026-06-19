@@ -1,1 +1,0 @@
-import{j as e}from"./index-D0iUIw8t.js";const s=({error:t})=>e.jsx("div",{className:"min-h-screen flex items-center justify-center p-6 text-center",children:e.jsx("p",{className:"text-mute",children:t.message})});export{s as errorComponent};
