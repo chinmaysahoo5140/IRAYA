@@ -91,5 +91,12 @@ export default defineConfig({
       "react-day-picker",
     ],
   },
-  build: {},
+  ssr: {
+    external: ["twilio"],
+  },
+  build: {
+    rollupOptions: {
+      external: ["twilio"],
+    },
+  },
 });
