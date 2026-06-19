@@ -6,7 +6,7 @@ export const Route = createFileRoute("/api/auth/verify-otp")({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const { twilioClient, TWILIO_VERIFY_SERVICE_SID } = await import(/* @vite-ignore */ "@/lib/twilio");
+          const { getTwilioClient, getVerifyServiceSid } = await import(/* @vite-ignore */ "@/lib/twilio");
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           const {
             getClientIp,
@@ -30,10 +30,12 @@ export const Route = createFileRoute("/api/auth/verify-otp")({
           }
 
           // 1. Verify OTP via Twilio
+          const twilioClient = getTwilioClient();
+          const verifyServiceSid = getVerifyServiceSid();
           let verificationCheck;
           try {
             verificationCheck = await twilioClient.verify.v2
-              .services(TWILIO_VERIFY_SERVICE_SID)
+              .services(verifyServiceSid)
               .verificationChecks.create({ to: phone, code });
           } catch (twilioErr: any) {
             console.error("Twilio check error:", twilioErr);

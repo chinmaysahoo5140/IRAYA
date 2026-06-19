@@ -1,12 +1,27 @@
 import twilio from "twilio";
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+let client: ReturnType<typeof twilio> | null = null;
 
-if (!accountSid || !authToken || !verifyServiceSid) {
-  throw new Error("Missing Twilio configuration environment variables.");
-}
+export const getTwilioClient = (): ReturnType<typeof twilio> => {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
 
-export const twilioClient = twilio(accountSid, authToken);
-export const TWILIO_VERIFY_SERVICE_SID = verifyServiceSid;
+  if (!accountSid || !authToken) {
+    throw new Error("Missing Twilio configuration environment variables (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN).");
+  }
+
+  if (!client) {
+    client = twilio(accountSid, authToken);
+  }
+  return client;
+};
+
+export const getVerifyServiceSid = (): string => {
+  const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+
+  if (!verifyServiceSid) {
+    throw new Error("Missing Twilio Verify Service SID environment variable (TWILIO_VERIFY_SERVICE_SID).");
+  }
+
+  return verifyServiceSid;
+};

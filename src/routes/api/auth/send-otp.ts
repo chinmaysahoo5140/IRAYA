@@ -5,7 +5,7 @@ export const Route = createFileRoute("/api/auth/send-otp")({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const { twilioClient, TWILIO_VERIFY_SERVICE_SID } = await import(/* @vite-ignore */ "@/lib/twilio");
+          const { getTwilioClient, getVerifyServiceSid } = await import(/* @vite-ignore */ "@/lib/twilio");
           const { getClientIp, checkRateLimit } = await import("@/lib/security.server");
 
           let body;
@@ -37,8 +37,10 @@ export const Route = createFileRoute("/api/auth/send-otp")({
           }
 
           // 3. Request verification from Twilio
+          const twilioClient = getTwilioClient();
+          const verifyServiceSid = getVerifyServiceSid();
           const verification = await twilioClient.verify.v2
-            .services(TWILIO_VERIFY_SERVICE_SID)
+            .services(verifyServiceSid)
             .verifications.create({ to: phone, channel: "sms" });
 
           return Response.json({ success: true, sid: verification.sid });
