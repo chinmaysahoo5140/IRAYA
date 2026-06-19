@@ -1,0 +1,49 @@
+import { jsxs, jsx } from "react/jsx-runtime";
+import { Link } from "@tanstack/react-router";
+import { Check } from "lucide-react";
+import { N as Navbar, F as Footer } from "./Footer-CUv8LSGA.js";
+import { g as Route } from "./router-pa2HfNNz.js";
+import "react";
+import "@tanstack/react-query";
+import "@supabase/supabase-js";
+import "sonner";
+import "react-hot-toast";
+import "@vercel/analytics/react";
+import "./server-C1RKXgFD.js";
+import "node:async_hooks";
+import "h3-v2";
+import "@tanstack/router-core";
+import "seroval";
+import "@tanstack/history";
+import "@tanstack/router-core/ssr/client";
+import "@tanstack/router-core/ssr/server";
+import "@tanstack/react-router/ssr/server";
+import "zod";
+import "./auth-middleware-HVhdhqZn.js";
+import "node:crypto";
+function SuccessPage() {
+  const {
+    o
+  } = Route.useSearch();
+  return /* @__PURE__ */ jsxs("div", { className: "bg-background min-h-screen flex flex-col", children: [
+    /* @__PURE__ */ jsx(Navbar, {}),
+    /* @__PURE__ */ jsx("main", { className: "flex-1 flex items-center justify-center px-6 pt-32 pb-20", children: /* @__PURE__ */ jsxs("div", { className: "text-center max-w-lg", children: [
+      /* @__PURE__ */ jsx("div", { className: "mx-auto h-16 w-16 rounded-full border border-gold flex items-center justify-center", children: /* @__PURE__ */ jsx(Check, { className: "h-6 w-6 text-gold", strokeWidth: 1.5 }) }),
+      /* @__PURE__ */ jsx("div", { className: "mt-8 text-[11px] tracking-luxury uppercase text-mute", children: "Thank you" }),
+      /* @__PURE__ */ jsx("h1", { className: "mt-4 font-serif text-4xl md:text-5xl tracking-luxury", children: "Your order is confirmed" }),
+      o && /* @__PURE__ */ jsxs("p", { className: "mt-6 text-sm tracking-wide-2 text-mute", children: [
+        "Order number: ",
+        /* @__PURE__ */ jsx("span", { className: "text-charcoal", children: o })
+      ] }),
+      /* @__PURE__ */ jsx("p", { className: "mt-6 text-[15px] text-foreground/70", children: "A note from the atelier will arrive in your inbox shortly. We will contact you when your piece begins its journey." }),
+      /* @__PURE__ */ jsxs("div", { className: "mt-10 flex gap-3 justify-center", children: [
+        /* @__PURE__ */ jsx(Link, { to: "/account", className: "border border-charcoal px-6 py-3 text-[11px] tracking-luxury uppercase hover:bg-charcoal hover:text-ivory transition-colors", children: "View Orders" }),
+        /* @__PURE__ */ jsx(Link, { to: "/collection", className: "bg-charcoal text-ivory px-6 py-3 text-[11px] tracking-luxury uppercase hover:bg-gold transition-colors", children: "Continue browsing" })
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsx(Footer, {})
+  ] });
+}
+export {
+  SuccessPage as component
+};

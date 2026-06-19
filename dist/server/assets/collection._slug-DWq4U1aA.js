@@ -1,0 +1,108 @@
+import { jsxs, jsx, Fragment } from "react/jsx-runtime";
+import { e as Route, f as productQO, u as useCart } from "./router-pa2HfNNz.js";
+import { useRouter, Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { Check, ArrowRight } from "lucide-react";
+import { N as Navbar, F as Footer } from "./Footer-CUv8LSGA.js";
+import { f as formatINR } from "./format-Sk5HC8SH.js";
+import { toast } from "sonner";
+import "@supabase/supabase-js";
+import "react-hot-toast";
+import "@vercel/analytics/react";
+import "./server-C1RKXgFD.js";
+import "node:async_hooks";
+import "h3-v2";
+import "@tanstack/router-core";
+import "seroval";
+import "@tanstack/history";
+import "@tanstack/router-core/ssr/client";
+import "@tanstack/router-core/ssr/server";
+import "@tanstack/react-router/ssr/server";
+import "zod";
+import "./auth-middleware-HVhdhqZn.js";
+import "node:crypto";
+function PDP() {
+  const {
+    slug
+  } = Route.useParams();
+  const {
+    data: p
+  } = useSuspenseQuery(productQO(slug));
+  const cart = useCart();
+  const router = useRouter();
+  const [activeImg, setActiveImg] = useState(0);
+  const [adding, setAdding] = useState(false);
+  const img = p.images?.[activeImg]?.url ?? null;
+  const handleAdd = () => {
+    if (!img) return;
+    setAdding(true);
+    cart.add({
+      productId: p.id,
+      slug: p.slug,
+      name: p.name,
+      price: Number(p.price),
+      imageUrl: img
+    });
+    toast.success(`${p.name} added to bag`);
+    setTimeout(() => setAdding(false), 1200);
+  };
+  const handleBuyNow = () => {
+    handleAdd();
+    router.navigate({
+      to: "/checkout"
+    });
+  };
+  return /* @__PURE__ */ jsxs("div", { className: "bg-background text-foreground", children: [
+    /* @__PURE__ */ jsx(Navbar, {}),
+    /* @__PURE__ */ jsx("section", { className: "pt-28 lg:pt-32 pb-20", children: /* @__PURE__ */ jsxs("div", { className: "mx-auto max-w-[1500px] px-6 lg:px-10", children: [
+      /* @__PURE__ */ jsxs("nav", { className: "text-[10px] tracking-luxury uppercase text-mute mb-8", children: [
+        /* @__PURE__ */ jsx(Link, { to: "/", className: "hover:text-charcoal", children: "Maison" }),
+        /* @__PURE__ */ jsx("span", { className: "mx-2", children: "/" }),
+        /* @__PURE__ */ jsx(Link, { to: "/collection", className: "hover:text-charcoal", children: "Collection" }),
+        p.categories && /* @__PURE__ */ jsxs(Fragment, { children: [
+          /* @__PURE__ */ jsx("span", { className: "mx-2", children: "/" }),
+          /* @__PURE__ */ jsx(Link, { to: "/collection", search: {
+            category: p.categories.slug
+          }, className: "hover:text-charcoal", children: p.categories.name })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "grid md:grid-cols-2 gap-10 lg:gap-20", children: [
+        /* @__PURE__ */ jsxs("div", { children: [
+          /* @__PURE__ */ jsx("div", { className: "aspect-[4/5] bg-secondary overflow-hidden hairline-b", children: img && /* @__PURE__ */ jsx("img", { src: img, alt: p.name, className: "h-full w-full object-cover" }) }),
+          p.images.length > 1 && /* @__PURE__ */ jsx("div", { className: "mt-4 grid grid-cols-4 gap-3", children: p.images.map((im, i) => /* @__PURE__ */ jsx("button", { onClick: () => setActiveImg(i), className: `aspect-square overflow-hidden border ${i === activeImg ? "border-charcoal" : "border-transparent"}`, children: /* @__PURE__ */ jsx("img", { src: im.url, alt: im.alt ?? "", className: "h-full w-full object-cover" }) }, im.url)) })
+        ] }),
+        /* @__PURE__ */ jsxs("div", { className: "lg:pt-12", children: [
+          p.categories && /* @__PURE__ */ jsx("div", { className: "text-[11px] tracking-luxury uppercase text-mute", children: p.categories.name }),
+          /* @__PURE__ */ jsx("h1", { className: "mt-4 font-serif text-4xl md:text-5xl tracking-luxury leading-tight", children: p.name }),
+          /* @__PURE__ */ jsx("div", { className: "mt-6 text-xl tracking-wide-2", children: formatINR(p.price) }),
+          p.description && /* @__PURE__ */ jsx("p", { className: "mt-8 text-[15px] leading-relaxed text-foreground/80", children: p.description }),
+          /* @__PURE__ */ jsx("div", { className: "mt-8 text-[11px] tracking-wide-2 uppercase text-mute", children: p.stock > 0 ? /* @__PURE__ */ jsx("span", { className: "text-charcoal", children: p.stock < 5 ? `Only ${p.stock} remaining` : "In atelier" }) : /* @__PURE__ */ jsx("span", { children: "Currently unavailable" }) }),
+          /* @__PURE__ */ jsxs("div", { className: "mt-10 flex flex-col gap-3", children: [
+            /* @__PURE__ */ jsx("button", { onClick: handleAdd, disabled: p.stock === 0 || adding, className: "inline-flex items-center justify-center gap-3 bg-charcoal text-ivory px-8 py-4 text-[11px] tracking-luxury uppercase hover:bg-gold transition-colors disabled:opacity-40", children: adding ? /* @__PURE__ */ jsxs(Fragment, { children: [
+              /* @__PURE__ */ jsx(Check, { className: "h-3.5 w-3.5" }),
+              " Added"
+            ] }) : "Add to Bag" }),
+            /* @__PURE__ */ jsxs("button", { onClick: handleBuyNow, disabled: p.stock === 0, className: "inline-flex items-center justify-center gap-3 border border-charcoal text-charcoal px-8 py-4 text-[11px] tracking-luxury uppercase hover:bg-charcoal hover:text-ivory transition-colors disabled:opacity-40", children: [
+              "Acquire Now ",
+              /* @__PURE__ */ jsx(ArrowRight, { className: "h-3.5 w-3.5", strokeWidth: 1.25 })
+            ] })
+          ] }),
+          p.story && /* @__PURE__ */ jsxs("div", { className: "mt-14 pt-10 hairline-t", children: [
+            /* @__PURE__ */ jsx("div", { className: "text-[11px] tracking-luxury uppercase text-gold", children: "The Story" }),
+            /* @__PURE__ */ jsx("p", { className: "mt-5 font-serif text-xl leading-relaxed text-foreground/85", children: p.story })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-[11px] tracking-wide-2 uppercase text-mute", children: [
+            /* @__PURE__ */ jsx("div", { children: "Complimentary shipping over ₹25,000" }),
+            /* @__PURE__ */ jsx("div", { children: "Signed by maker" }),
+            /* @__PURE__ */ jsx("div", { children: "Lifetime restoration" })
+          ] })
+        ] })
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsx(Footer, {})
+  ] });
+}
+export {
+  PDP as component
+};

@@ -1,0 +1,1 @@
+import{j as e}from"./index-D0iUIw8t.js";const t=()=>e.jsx("div",{className:"min-h-screen flex items-center justify-center",children:e.jsx("p",{className:"text-mute",children:"This piece is no longer available."})});export{t as notFoundComponent};
