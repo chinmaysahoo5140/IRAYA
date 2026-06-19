@@ -1,0 +1,235 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* IRAYA — luxury design system. Hermès-inspired: ivory, gold, charcoal. */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Brand semantic tokens (also exposed for Tailwind utilities) */
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-ivory: var(--ivory);
+  --color-charcoal: var(--charcoal);
+  --color-rose: var(--rose);
+  --color-hairline: var(--hairline);
+  --color-mute: var(--mute);
+
+  --font-serif: "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --tracking-luxury: 0.28em;
+  --tracking-wide-2: 0.16em;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+}
+
+:root {
+  /* Iraya palette (oklch) */
+  --ivory: oklch(0.972 0.012 85);          /* #FAF8F5 warm ivory */
+  --charcoal: oklch(0.22 0.005 60);         /* #1A1A1A */
+  --gold: oklch(0.71 0.123 75);             /* #C8973A deep saffron gold */
+  --gold-soft: oklch(0.82 0.08 80);
+  --rose: oklch(0.78 0.05 35);              /* dusty rose */
+  --hairline: oklch(0.9 0.008 70);          /* #E0DDD8 */
+  --mute: oklch(0.6 0.012 70);              /* #8A8580 */
+
+  --background: var(--ivory);
+  --foreground: oklch(0.27 0.005 60);       /* #2C2C2C */
+
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: var(--ivory);
+  --popover-foreground: var(--foreground);
+  --primary: var(--charcoal);
+  --primary-foreground: var(--ivory);
+  --secondary: oklch(0.95 0.008 80);
+  --secondary-foreground: var(--charcoal);
+  --muted: oklch(0.95 0.008 80);
+  --muted-foreground: var(--mute);
+  --accent: var(--gold);
+  --accent-foreground: var(--ivory);
+  --destructive: oklch(0.55 0.18 25);
+  --destructive-foreground: var(--ivory);
+  --border: var(--hairline);
+  --input: var(--hairline);
+  --ring: var(--gold);
+
+  --radius: 0px;
+}
+
+.dark {
+  --background: var(--charcoal);
+  --foreground: var(--ivory);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-weight: 300;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.005em;
+  }
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ivory);
+  }
+}
+
+/* Iraya utilities */
+@utility tracking-luxury {
+  letter-spacing: 0.28em;
+}
+@utility tracking-wide-2 {
+  letter-spacing: 0.16em;
+}
+@utility hairline-b {
+  border-bottom: 1px solid var(--color-hairline);
+}
+@utility hairline-t {
+  border-top: 1px solid var(--color-hairline);
+}
+
+/* Subtle fade-up animation for sections */
+@keyframes iraya-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@utility fade-up {
+  animation: iraya-fade-up 0.9s ease both;
+}
+
+/* Skeleton shimmer for loading states */
+@keyframes iraya-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@utility animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(0.93 0.006 80) 25%,
+    oklch(0.97 0.003 80) 50%,
+    oklch(0.93 0.006 80) 75%
+  );
+  background-size: 200% 100%;
+  animation: iraya-shimmer 1.6s ease-in-out infinite;
+}
+
+/* Slow image zoom on hover */
+@utility img-hover {
+  transition: transform 0.7s ease, opacity 0.4s ease;
+}
+.group:hover .img-hover { transform: scale(1.03); }
+
+/* Mobile Navigation scoped style */
+@media (max-width: 768px) {
+  .mobile-header {
+    background-color: var(--color-background);
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .mobile-header .navbar-grid {
+    height: 56px !important;
+  }
+  
+  .logo-link {
+    grid-column: 2;
+  }
+
+  .right-icons {
+    gap: 16px !important;
+  }
+
+  /* Drawer Backdrop overlay */
+  .mobile-drawer-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .mobile-drawer-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Slide-in Drawer container */
+  .mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background-color: #FAF8F5; /* Cream/off-white background */
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-drawer.open {
+    transform: translateX(0);
+  }
+
+  /* Category links inside drawer */
+  .drawer-link {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--color-foreground);
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    transition: color 0.2s ease;
+  }
+
+  .drawer-link:hover {
+    color: var(--color-gold);
+  }
+}
