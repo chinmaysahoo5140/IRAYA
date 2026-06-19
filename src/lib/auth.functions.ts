@@ -186,7 +186,7 @@ export const signInWithPasswordServerFn = createServerFn({ method: "POST" })
       .select("id")
       .single();
 
-    if (sessionErr) throw new Error("Could not initialize session");
+    if (sessionErr) throw new Error("Could not initialize session: " + sessionErr.message);
 
     const headers = new Headers();
     const secure = process.env.NODE_ENV === "production" ? "Secure;" : "";
@@ -466,7 +466,7 @@ export const verify2faServerFn = createServerFn({ method: "POST" })
     const { browserName, browserVersion, os } = parseUserAgent(ua);
     const { country, city } = await geoLookup(ip);
 
-    const { data: sessionRow } = await supabaseAdmin
+    const { data: sessionRow, error: sessionErr } = await supabaseAdmin
       .from("user_sessions")
       .insert({
         user_id: userId,
@@ -481,7 +481,7 @@ export const verify2faServerFn = createServerFn({ method: "POST" })
       .select("id")
       .single();
 
-    if (!sessionRow) throw new Error("Could not initialize session");
+    if (sessionErr || !sessionRow) throw new Error("Could not initialize session: " + sessionErr?.message);
 
     // Clear verification token
     await supabaseAdmin.from("email_verification_tokens").delete().eq("token", data.tempToken);
