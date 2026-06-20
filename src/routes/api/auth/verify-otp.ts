@@ -119,11 +119,10 @@ export const Route = createFileRoute("/api/auth/verify-otp")({
               city,
             })
             .select("id")
-            .single();
+            .maybeSingle();
 
-          if (sessionErr || !sessionRow) {
-            console.error("Could not initialize session row in database:", sessionErr);
-            throw new Error("Could not initialize user session.");
+          if (sessionErr) {
+            console.warn("[verify-otp] Could not initialize session row in database:", sessionErr.message);
           }
 
           // 7. Write security event
@@ -146,9 +145,11 @@ export const Route = createFileRoute("/api/auth/verify-otp")({
             "Set-Cookie",
             `sb-refresh-token=${authData.session.refresh_token}; HttpOnly; ${secure} SameSite=Strict; Path=/; Max-Age=604800`
           );
+          
+          const sessionId = sessionRow?.id ?? "no-session";
           headers.append(
             "Set-Cookie",
-            `sb-session-id=${sessionRow.id}; HttpOnly; ${secure} SameSite=Strict; Path=/; Max-Age=2592000`
+            `sb-session-id=${sessionId}; HttpOnly; ${secure} SameSite=Strict; Path=/; Max-Age=2592000`
           );
 
           // Rotates password once more to ensure the temp secure password cannot be reused

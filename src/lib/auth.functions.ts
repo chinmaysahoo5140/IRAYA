@@ -184,15 +184,19 @@ export const signInWithPasswordServerFn = createServerFn({ method: "POST" })
         city,
       })
       .select("id")
-      .single();
+      .maybeSingle();
 
-    if (sessionErr) throw new Error("Could not initialize session: " + sessionErr.message);
+    if (sessionErr) {
+      console.warn("[signInWithPasswordServerFn] Could not initialize session in database:", sessionErr.message);
+    }
 
     const headers = new Headers();
     const secure = process.env.NODE_ENV === "production" ? "Secure;" : "";
     headers.append("Set-Cookie", `sb-access-token=${authData.session.access_token}; HttpOnly; ${secure} SameSite=Strict; Path=/; Max-Age=900`);
     headers.append("Set-Cookie", `sb-refresh-token=${authData.session.refresh_token}; HttpOnly; ${secure} SameSite=Strict; Path=/; Max-Age=604800`);
-    headers.append("Set-Cookie", `sb-session-id=${sessionRow.id}; HttpOnly; ${secure} SameSite=Strict; Path=/; Max-Age=2592000`);
+    
+    const sessionId = sessionRow?.id ?? "no-session";
+    headers.append("Set-Cookie", `sb-session-id=${sessionId}; HttpOnly; ${secure} SameSite=Strict; Path=/; Max-Age=2592000`);
 
     // Record login events
     const loginHistory = await recordLoginEvent({
@@ -208,7 +212,7 @@ export const signInWithPasswordServerFn = createServerFn({ method: "POST" })
         token: blockToken,
         user_id: userId,
         action_type: "session_block",
-        metadata: { sessionId: sessionRow.id },
+        metadata: { sessionId },
         expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
       });
       const origin = req?.headers.get("origin") ?? "http://localhost:8081";
