@@ -263,7 +263,7 @@ export const signUpServerFn = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
-      email_confirm: true,
+      email_confirm: false,
       user_metadata: { full_name: data.full_name ?? "" },
     });
 

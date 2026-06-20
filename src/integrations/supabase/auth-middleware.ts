@@ -97,6 +97,13 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
       if (!error && data?.claims?.sub) {
         userId = data.claims.sub;
         claims = data.claims;
+
+        // Enforce verification: signed-up email users must verify their email.
+        const isEmailVerified = claims?.email_verified === true;
+        const isPhoneVerified = claims?.phone_verified === true;
+        if (claims?.email && !isEmailVerified && !isPhoneVerified) {
+          throw new Error('Unauthorized: Email verification required');
+        }
       } else {
         token = null; // Token expired or invalid
       }
@@ -159,6 +166,13 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
         
         const { data: claimsData } = await supabase.auth.getClaims(token);
         claims = claimsData?.claims;
+
+        // Enforce verification: signed-up email users must verify their email.
+        const isEmailVerified = claims?.email_verified === true;
+        const isPhoneVerified = claims?.phone_verified === true;
+        if (claims?.email && !isEmailVerified && !isPhoneVerified) {
+          throw new Error('Unauthorized: Email verification required');
+        }
 
         // Update session active timestamp — non-fatal: don't block auth if table is temporarily unavailable
         const sessionId = getCookie('sb-session-id');
