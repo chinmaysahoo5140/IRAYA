@@ -1,63 +1,45 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
-import { ProtectedRoute } from "@/component/ProtectedRoute";
 import { Navbar } from "@/component/iraya/Navbar";
 import { Footer } from "@/component/iraya/Footer";
-import { api } from "@/lib/axios";
+import { getMyProfile, updateMyProfile } from "@/lib/profile.functions";
 import { SkeletonLine } from "@/component/skeletons/SkeletonLine";
 import { SkeletonBox } from "@/component/skeletons/SkeletonBox";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/account/profile")({
-  component: ProfilePageWrapper,
+  component: ProfilePage,
 });
 
-function ProfilePageWrapper() {
-  return (
-    <ProtectedRoute fallback={<ProfileSkeleton />}>
-      <ProfilePage />
-    </ProtectedRoute>
-  );
-}
-
 function ProfilePage() {
-  const [name, setName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    async function fetchProfile() {
-      try {
-        const response = await api.get("/users/me");
-        const user = response.data?.user || response.data;
-        if (user) {
-          setName(user.name || "");
-          setEmail(user.email || "");
-          setPhone(user.phone || "");
+    getMyProfile()
+      .then((profile) => {
+        if (profile) {
+          setFullName(profile.full_name ?? "");
+          setEmail(profile.email ?? "");
+          setPhone(profile.phone ?? "");
         }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        toast.error("Failed to load profile details.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchProfile();
+      })
+      .catch(() => toast.error("Failed to load profile details."))
+      .finally(() => setLoading(false));
   }, []);
 
   async function handleSave(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
-
     try {
-      await api.patch("/users/me", { name, email, phone });
+      await updateMyProfile({ data: { full_name: fullName, phone: phone || undefined } });
       toast.success("Profile saved successfully!");
-    } catch (error: any) {
-      const msg = error.response?.data?.message || "Failed to update profile.";
-      toast.error(msg);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to update profile.");
     } finally {
       setBusy(false);
     }
@@ -84,8 +66,8 @@ function ProfilePage() {
                 <span className="block text-[11px] tracking-wide-2 uppercase text-mute">Full Name</span>
                 <input
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   className="w-full bg-transparent hairline-b py-2 text-sm focus:outline-none focus:border-charcoal transition-colors"
                   required
                 />
@@ -98,10 +80,10 @@ function ProfilePage() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-transparent hairline-b py-2 text-sm focus:outline-none focus:border-charcoal transition-colors"
-                  required
+                  disabled
+                  className="w-full bg-transparent hairline-b py-2 text-sm opacity-50 cursor-not-allowed"
                 />
+                <span className="text-[10px] text-mute mt-1 block">Email cannot be changed here.</span>
               </label>
             </div>
 
@@ -112,6 +94,7 @@ function ProfilePage() {
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+919876543210"
                   className="w-full bg-transparent hairline-b py-2 text-sm focus:outline-none focus:border-charcoal transition-colors"
                 />
               </label>

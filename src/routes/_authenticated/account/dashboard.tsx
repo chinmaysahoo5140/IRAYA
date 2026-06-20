@@ -1,70 +1,35 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ProtectedRoute } from "@/component/ProtectedRoute";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { Navbar } from "@/component/iraya/Navbar";
 import { Footer } from "@/component/iraya/Footer";
-import { api } from "@/lib/axios";
+import { getMyProfile } from "@/lib/profile.functions";
+import { listMyOrders } from "@/lib/orders.functions";
+import { formatINR } from "@/lib/format";
 import { SkeletonAvatar } from "@/component/skeletons/SkeletonAvatar";
 import { SkeletonLine } from "@/component/skeletons/SkeletonLine";
 import { SkeletonBox } from "@/component/skeletons/SkeletonBox";
 import { ShoppingBag, MapPin, User as UserIcon, Calendar } from "lucide-react";
 
+const profileQO = queryOptions({ queryKey: ["my-profile"], queryFn: () => getMyProfile() });
+const ordersQO = queryOptions({ queryKey: ["my-orders"], queryFn: () => listMyOrders() });
+
 export const Route = createFileRoute("/_authenticated/account/dashboard")({
-  component: DashboardPageWrapper,
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(profileQO),
+      context.queryClient.ensureQueryData(ordersQO),
+    ]),
+  pendingComponent: DashboardSkeleton,
+  head: () => ({ meta: [{ title: "Dashboard — IRAYA" }] }),
+  component: DashboardPage,
 });
 
-function DashboardPageWrapper() {
-  return (
-    <ProtectedRoute fallback={<DashboardSkeleton />}>
-      <DashboardPage />
-    </ProtectedRoute>
-  );
-}
-
-interface Order {
-  id: string;
-  orderNumber: string;
-  created_at: string;
-  status: string;
-  total: number;
-}
-
 function DashboardPage() {
-  const [profile, setProfile] = useState<any>(null);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [pageLoading, setPageLoading] = useState(true);
+  const { data: profile } = useSuspenseQuery(profileQO);
+  const { data: orders } = useSuspenseQuery(ordersQO);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [profileRes, ordersRes] = await Promise.all([
-          api.get("/users/me"),
-          api.get("/orders"),
-        ]);
-        setProfile(profileRes.data?.user || profileRes.data);
-        setOrders(ordersRes.data?.orders || ordersRes.data || []);
-      } catch (error) {
-        console.error("Error fetching dashboard data", error);
-      } finally {
-        setPageLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  if (pageLoading) {
-    return <DashboardSkeleton />;
-  }
-
-  // Get user initials for avatar
-  const name = profile?.name || "Guest";
-  const email = profile?.email || "";
-  const joinedDate = profile?.createdAt
-    ? new Date(profile.createdAt).toLocaleDateString("en-IN", {
-        month: "long",
-        year: "numeric",
-      })
-    : "Recently";
+  const name = profile?.full_name ?? "Guest";
+  const email = profile?.email ?? "";
   const initials = name
     .split(" ")
     .map((n: string) => n[0])
@@ -90,7 +55,7 @@ function DashboardPage() {
               <p className="text-sm text-mute">{email}</p>
               <div className="flex items-center gap-1.5 text-xs text-mute mt-2">
                 <Calendar className="h-3.5 w-3.5" />
-                <span>Joined {joinedDate}</span>
+                <span>Member</span>
               </div>
             </div>
           </div>
@@ -98,7 +63,7 @@ function DashboardPage() {
           {/* Quick Link Cards */}
           <div className="grid md:grid-cols-3 gap-6 py-12 hairline-b">
             <Link
-              to="/account/orders"
+              to="/account"
               className="group p-6 border border-hairline hover:border-charcoal transition-all flex flex-col justify-between h-40 bg-card"
             >
               <ShoppingBag className="h-6 w-6 text-gold" strokeWidth={1.25} />
@@ -132,7 +97,7 @@ function DashboardPage() {
                 <h3 className="font-serif text-lg text-charcoal group-hover:text-gold transition-colors">
                   Edit Profile
                 </h3>
-                <p className="text-xs text-mute mt-1">Update name, email, and phone</p>
+                <p className="text-xs text-mute mt-1">Update name and phone</p>
               </div>
             </Link>
           </div>
@@ -154,16 +119,18 @@ function DashboardPage() {
             ) : (
               <div className="space-y-4">
                 {recentOrders.map((o) => (
-                  <div
+                  <Link
                     key={o.id}
+                    to="/account/orders/$id"
+                    params={{ id: o.id }}
                     className="flex justify-between items-center p-6 border border-hairline bg-card hover:border-charcoal transition-all"
                   >
                     <div>
                       <div className="font-serif text-lg text-charcoal font-medium">
-                        Order #{o.orderNumber || o.id.slice(0, 8)}
+                        {o.order_number}
                       </div>
                       <div className="text-xs text-mute mt-1">
-                        {new Date(o.created_at || Date.now()).toLocaleDateString("en-IN", {
+                        {new Date(o.created_at).toLocaleDateString("en-IN", {
                           day: "numeric",
                           month: "long",
                           year: "numeric",
@@ -171,14 +138,12 @@ function DashboardPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-serif text-lg text-charcoal">
-                        ₹{Number(o.total || 0).toLocaleString("en-IN")}
-                      </div>
+                      <div className="font-serif text-lg text-charcoal">{formatINR(o.total)}</div>
                       <span className="inline-block mt-1 text-[10px] tracking-luxury uppercase font-medium text-gold bg-gold/5 px-2.5 py-1 rounded-full">
                         {o.status}
                       </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

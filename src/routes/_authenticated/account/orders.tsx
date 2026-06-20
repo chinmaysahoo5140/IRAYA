@@ -1,73 +1,43 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ProtectedRoute } from "@/component/ProtectedRoute";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { Navbar } from "@/component/iraya/Navbar";
 import { Footer } from "@/component/iraya/Footer";
-import { api } from "@/lib/axios";
+import { listMyOrders } from "@/lib/orders.functions";
+import { formatINR } from "@/lib/format";
 import { SkeletonLine } from "@/component/skeletons/SkeletonLine";
 import { SkeletonBadge } from "@/component/skeletons/SkeletonBadge";
 import { SkeletonBox } from "@/component/skeletons/SkeletonBox";
 import { ShoppingBag, HelpCircle } from "lucide-react";
 
+const ordersQO = queryOptions({ queryKey: ["my-orders"], queryFn: () => listMyOrders() });
+
 export const Route = createFileRoute("/_authenticated/account/orders")({
-  component: OrdersPageWrapper,
+  loader: ({ context }) => context.queryClient.ensureQueryData(ordersQO),
+  pendingComponent: OrdersSkeleton,
+  head: () => ({ meta: [{ title: "Orders — IRAYA" }] }),
+  component: OrdersPage,
 });
 
-function OrdersPageWrapper() {
-  return (
-    <ProtectedRoute fallback={<OrdersSkeleton />}>
-      <OrdersPage />
-    </ProtectedRoute>
-  );
-}
-
-interface Order {
-  id: string;
-  orderNumber: string;
-  created_at: string;
-  status: string;
-  total: number;
+// Get status badge colors
+function getStatusStyle(status: string) {
+  const s = status.toLowerCase();
+  if (s.includes("pending")) {
+    return "text-amber-700 bg-amber-50 dark:text-amber-400 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900";
+  }
+  if (s.includes("confirm")) {
+    return "text-blue-700 bg-blue-50 dark:text-blue-400 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900";
+  }
+  if (s.includes("ship")) {
+    return "text-violet-700 bg-violet-50 dark:text-violet-400 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900";
+  }
+  if (s.includes("deliver") || s.includes("paid")) {
+    return "text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900";
+  }
+  return "text-mute bg-secondary border-hairline";
 }
 
 function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchOrders() {
-      try {
-        const response = await api.get("/orders");
-        setOrders(response.data?.orders || response.data || []);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchOrders();
-  }, []);
-
-  if (loading) {
-    return <OrdersSkeleton />;
-  }
-
-  // Get status badge colors
-  function getStatusStyle(status: string) {
-    const s = status.toLowerCase();
-    if (s.includes("pending")) {
-      return "text-amber-700 bg-amber-50 dark:text-amber-400 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900";
-    }
-    if (s.includes("confirm")) {
-      return "text-blue-700 bg-blue-50 dark:text-blue-400 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900";
-    }
-    if (s.includes("ship")) {
-      return "text-violet-700 bg-violet-50 dark:text-violet-400 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900";
-    }
-    if (s.includes("deliver")) {
-      return "text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900";
-    }
-    return "text-mute bg-secondary border-hairline";
-  }
+  const { data: orders } = useSuspenseQuery(ordersQO);
 
   return (
     <div className="bg-background min-h-screen flex flex-col justify-between">
@@ -104,12 +74,10 @@ function OrdersPage() {
                   <div className="space-y-2 flex-grow">
                     <div className="flex items-center gap-3 flex-wrap">
                       <span className="font-serif text-lg text-charcoal font-medium">
-                        Order #{o.orderNumber || o.id.slice(0, 8)}
+                        {o.order_number}
                       </span>
                       <span
-                        className={`text-[9px] tracking-wide-2 uppercase font-medium border px-2.5 py-0.5 rounded-full ${getStatusStyle(
-                          o.status
-                        )}`}
+                        className={`text-[9px] tracking-wide-2 uppercase font-medium border px-2.5 py-0.5 rounded-full ${getStatusStyle(o.status)}`}
                       >
                         {o.status}
                       </span>
@@ -117,16 +85,14 @@ function OrdersPage() {
                     <div className="text-xs text-mute flex gap-4">
                       <span>
                         Placed on{" "}
-                        {new Date(o.created_at || Date.now()).toLocaleDateString("en-IN", {
+                        {new Date(o.created_at).toLocaleDateString("en-IN", {
                           day: "numeric",
                           month: "long",
                           year: "numeric",
                         })}
                       </span>
                       <span>•</span>
-                      <span className="font-medium text-charcoal">
-                        ₹{Number(o.total || 0).toLocaleString("en-IN")}
-                      </span>
+                      <span className="font-medium text-charcoal">{formatINR(o.total)}</span>
                     </div>
                   </div>
 

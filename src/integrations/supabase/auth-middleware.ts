@@ -160,13 +160,16 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
         const { data: claimsData } = await supabase.auth.getClaims(token);
         claims = claimsData?.claims;
 
-        // Update session active timestamp
+        // Update session active timestamp — non-fatal: don't block auth if table is temporarily unavailable
         const sessionId = getCookie('sb-session-id');
         if (sessionId) {
-          await supabaseAdmin
+          supabaseAdmin
             .from('user_sessions')
             .update({ last_active: new Date().toISOString() })
-            .eq('id', sessionId);
+            .eq('id', sessionId)
+            .then(({ error }) => {
+              if (error) console.warn('[auth-middleware] session update skipped:', error.message);
+            });
         }
       } catch (err) {
         // Clear invalid cookies
