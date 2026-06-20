@@ -22,10 +22,10 @@ async function getServerEntry(): Promise<ServerEntry> {
 // Supabase, and Google fonts.
 const CSP = [
   "default-src 'self'",
-  "img-src 'self' data: blob: https:",
+  "img-src 'self' data: blob: https: res.cloudinary.com *.cloudinary.com",
   "font-src 'self' data: https:",
   "style-src 'self' 'unsafe-inline' https:",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com",
+  "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com",
   "connect-src 'self' https: wss: http://localhost:* ws://localhost:*",
   "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://*.razorpay.com",
   // Block other framers (clickjacking defence).
@@ -40,11 +40,11 @@ function applySecurityHeaders(response: Response): Response {
   const contentType = response.headers.get("content-type") ?? "";
   const headers = new Headers(response.headers);
 
+  headers.set("X-Frame-Options", "SAMEORIGIN");
   headers.set("X-Content-Type-Options", "nosniff");
-  // X-XSS-Protection intentionally omitted: deprecated in modern browsers and
-  // can introduce XSS vulnerabilities in old IE. Rely on CSP instead.
+  headers.set("X-XSS-Protection", "1; mode=block");
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
+  headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(self)");
   headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
   headers.set("Cross-Origin-Opener-Policy", "same-origin");
   headers.set("Cross-Origin-Resource-Policy", "same-origin");
@@ -52,6 +52,7 @@ function applySecurityHeaders(response: Response): Response {
   if (contentType.includes("text/html")) {
     headers.set("Content-Security-Policy", CSP);
   }
+
 
   return new Response(response.body, {
     status: response.status,

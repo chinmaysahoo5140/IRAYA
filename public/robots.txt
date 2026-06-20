@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /checkout
+Disallow: /account
+Disallow: /admin
 
 Sitemap: https://www.iraya.in/sitemap.xml
+

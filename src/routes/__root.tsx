@@ -80,12 +80,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "IRAYA — an Indian luxury maison of heritage textiles, jewellery and objects." },
       { name: "twitter:description", content: "IRAYA — an Indian luxury maison of heritage textiles, jewellery and objects." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://www.iraya.in" },
+      { property: "og:site_name", content: "IRAYA" },
       { property: "og:image", content: "/og-image.png" },
       { name: "twitter:image", content: "/og-image.png" },
     ],
     links: [
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "shortcut icon", href: "/favicon.png" },
+      { rel: "canonical", href: "https://www.iraya.in" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" as const },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@100..900&display=swap" },
@@ -99,12 +102,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "IRAYA",
+    "url": "https://www.iraya.in",
+    "logo": "https://www.iraya.in/logo.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "",
+      "contactType": "customer service",
+      "email": "support@iraya.in"
+    }
+  };
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-charcoal focus:text-ivory focus:px-4 focus:py-2 focus:border focus:border-gold"
+        >
+          Skip to main content
+        </a>
         {children}
         <Scripts />
       </body>
@@ -135,7 +162,9 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <CartProvider>
         <AuthSync />
-        <Outlet />
+        <main id="main-content">
+          <Outlet />
+        </main>
         <Toaster position="bottom-right" />
         <HotToaster
           position="bottom-right"
@@ -155,3 +184,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+

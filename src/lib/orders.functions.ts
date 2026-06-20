@@ -192,3 +192,24 @@ export const trackOrder = createServerFn({ method: "POST" })
     return order;
   });
 
+
+export const verifyOrderPayment = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) => z.object({ orderNumber: z.string().min(1) }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: order, error } = await supabaseAdmin
+      .from("orders")
+      .select("id, status, user_id")
+      .eq("order_number", data.orderNumber)
+      .eq("user_id", context.userId)
+      .maybeSingle();
+
+    if (error || !order) {
+      return { verified: false };
+    }
+
+    return { verified: order.status === "paid" };
+  });
+
+

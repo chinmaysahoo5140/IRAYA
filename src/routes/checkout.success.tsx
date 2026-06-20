@@ -1,11 +1,30 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 import { Check } from "lucide-react";
 import { Navbar } from "@/component/iraya/Navbar";
 import { Footer } from "@/component/iraya/Footer";
+import { verifyOrderPayment } from "@/lib/orders.functions";
+
+const searchSchema = z.object({
+  o: z.string().optional(),
+});
 
 export const Route = createFileRoute("/checkout/success")({
-  validateSearch: z.object({ o: z.string().optional() }).parse,
+  validateSearch: searchSchema.parse,
+  loader: async ({ search }) => {
+    const orderNumber = search.o;
+    if (!orderNumber) {
+      throw redirect({ to: "/checkout" });
+    }
+    try {
+      const res = await verifyOrderPayment({ data: { orderNumber } });
+      if (!res.verified) {
+        throw redirect({ to: "/checkout" });
+      }
+    } catch {
+      throw redirect({ to: "/checkout" });
+    }
+  },
   head: () => ({ meta: [{ title: "Order confirmed — IRAYA" }] }),
   component: SuccessPage,
 });

@@ -13,6 +13,9 @@ export const Route = createFileRoute("/track")({
       { title: "Track Your Order — IRAYA" },
       { name: "description", content: "Track your IRAYA order shipment with your order number and email." },
     ],
+    links: [
+      { rel: "canonical", href: "https://www.iraya.in/track" },
+    ],
   }),
   component: TrackPage,
 });

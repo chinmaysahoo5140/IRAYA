@@ -157,6 +157,22 @@ function HomePage() {
         </div>
       </section>
 
+      {/* BRAND STORY */}
+      <section className="py-24 bg-charcoal text-ivory">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <Reveal>
+            <div className="text-[11px] tracking-luxury uppercase text-gold">The Atelier Story</div>
+            <h2 className="mt-4 font-serif text-3xl md:text-4xl text-ivory">Crafted with Quiet Intention</h2>
+            <p className="mt-8 text-sm md:text-base leading-relaxed text-ivory/70 font-light max-w-xl mx-auto">
+              IRAYA represents a harmonious convergence of ancient Indian artisanal heritage and modern, minimalist aesthetics. Rooted in the rich cultural tapestry of India, our design house is dedicated to producing ultra-premium handcrafted bags and luxury footwear that whisper sophistication. Every creation is born in our atelier, where skilled craftsmen with generations of ancestral expertise meticulously assemble each piece using only the finest responsibly sourced materials.
+            </p>
+            <p className="mt-4 text-sm md:text-base leading-relaxed text-ivory/70 font-light max-w-xl mx-auto">
+              We reject the breakneck pace of fast fashion, opting instead for a philosophy of slow, conscious luxury. By marrying timeless hand-loom textiles, master-carved brass ornaments, and premium full-grain leathers with clean, structured architectural lines, we create objects of enduring beauty. To carry an IRAYA bag or step into IRAYA footwear is to walk with a distinct sense of purpose, appreciating the soul, time, and human touch embedded in every single stitch.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
       {/* PROMISES */}
       <section id="craft" className="py-24 lg:py-28 hairline-t hairline-b bg-secondary/30">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 grid md:grid-cols-3 gap-12 md:gap-20">

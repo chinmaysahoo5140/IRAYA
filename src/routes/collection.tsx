@@ -7,7 +7,7 @@ import { ProductCard } from "@/component/iraya/ProductCard";
 import { listProducts, listCategories } from "@/lib/products.functions";
 
 const searchSchema = z.object({
-  category: z.enum(["bags", "footwear"]).optional(),
+  category: z.string().optional(),
 });
 
 const productsQO = (category?: string) =>
@@ -46,6 +46,9 @@ export const Route = createFileRoute("/collection")({
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
+      ],
+      links: [
+        { rel: "canonical", href: `https://www.iraya.in/collection${c ? `?category=${c}` : ""}` },
       ],
     };
   },
@@ -95,7 +98,7 @@ function CollectionPage() {
               <Link
                 key={c.id}
                 to="/collection"
-                search={{ category: c.slug as "bags" | "footwear" }}
+                search={{ category: c.slug }}
                 className={
                   category === c.slug
                     ? "text-charcoal border-b border-charcoal pb-1"
