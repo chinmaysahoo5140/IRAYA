@@ -27,8 +27,9 @@ export const updateMyProfile = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-    const { error } = await supabase.from("profiles").update(data).eq("id", userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { userId } = context;
+    const { error } = await supabaseAdmin.from("profiles").update(data).eq("id", userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
