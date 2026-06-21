@@ -11,8 +11,9 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/checkout/success")({
   validateSearch: searchSchema.parse,
-  loader: async ({ search }) => {
-    const orderNumber = search.o;
+  loaderDeps: ({ search }) => ({ o: search.o }),
+  loader: async ({ deps }) => {
+    const orderNumber = deps.o;
     if (!orderNumber) {
       throw redirect({ to: "/checkout" });
     }

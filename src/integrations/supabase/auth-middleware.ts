@@ -93,10 +93,10 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
 
     // Verify token if present
     if (token) {
-      const { data, error } = await supabase.auth.getClaims(token);
-      if (!error && data?.claims?.sub) {
-        userId = data.claims.sub;
-        claims = data.claims;
+      const { data, error } = await supabase.auth.getUser(token);
+      if (!error && data?.user) {
+        userId = data.user.id;
+        claims = decodeJwtPayload(token);
 
         // Enforce verification: signed-up email users must verify their email.
         const isEmailVerified = claims?.email_verified === true;
@@ -164,8 +164,7 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
         token = newSession.access_token;
         userId = newSession.user.id;
         
-        const { data: claimsData } = await supabase.auth.getClaims(token);
-        claims = claimsData?.claims;
+        claims = decodeJwtPayload(token);
 
         // Enforce verification: signed-up email users must verify their email.
         const isEmailVerified = claims?.email_verified === true;
