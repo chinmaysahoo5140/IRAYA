@@ -32,6 +32,9 @@
   --color-gold-soft: var(--gold-soft);
   --color-ivory: var(--ivory);
   --color-charcoal: var(--charcoal);
+  --color-emerald: var(--emerald);
+  --color-emerald-soft: var(--emerald-soft);
+  --color-sage: var(--sage);
   --color-rose: var(--rose);
   --color-hairline: var(--hairline);
   --color-mute: var(--mute);
@@ -50,34 +53,37 @@
 
 :root {
   /* Iraya palette (oklch) */
-  --ivory: oklch(0.972 0.012 85);          /* #FAF8F5 warm ivory */
+  --ivory: oklch(0.975 0.008 90);           /* warm ivory */
   --charcoal: oklch(0.22 0.005 60);         /* #1A1A1A */
-  --gold: oklch(0.71 0.123 75);             /* #C8973A deep saffron gold */
+  --gold: oklch(0.71 0.123 75);             /* deep saffron gold */
   --gold-soft: oklch(0.82 0.08 80);
+  --emerald: oklch(0.28 0.04 145);          /* luxury forest/emerald green */
+  --emerald-soft: oklch(0.38 0.05 145);
+  --sage: oklch(0.945 0.012 140);           /* soft greenish sage ivory */
   --rose: oklch(0.78 0.05 35);              /* dusty rose */
-  --hairline: oklch(0.9 0.008 70);          /* #E0DDD8 */
-  --mute: oklch(0.6 0.012 70);              /* #8A8580 */
+  --hairline: oklch(0.88 0.01 140);         /* Sage-tinted hairline */
+  --mute: oklch(0.55 0.02 140);             /* Sage-tinted mute */
 
   --background: var(--ivory);
-  --foreground: oklch(0.27 0.005 60);       /* #2C2C2C */
+  --foreground: oklch(0.25 0.01 145);       /* very dark slate/forest green-tinted charcoal */
 
-  --card: oklch(1 0 0);
+  --card: oklch(0.99 0.005 140);
   --card-foreground: var(--foreground);
   --popover: var(--ivory);
   --popover-foreground: var(--foreground);
-  --primary: var(--charcoal);
+  --primary: var(--emerald);
   --primary-foreground: var(--ivory);
-  --secondary: oklch(0.95 0.008 80);
-  --secondary-foreground: var(--charcoal);
-  --muted: oklch(0.95 0.008 80);
+  --secondary: var(--sage);
+  --secondary-foreground: var(--emerald);
+  --muted: var(--sage);
   --muted-foreground: var(--mute);
-  --accent: var(--gold);
+  --accent: var(--emerald);                 /* accent is now the forest green */
   --accent-foreground: var(--ivory);
   --destructive: oklch(0.55 0.18 25);
   --destructive-foreground: var(--ivory);
   --border: var(--hairline);
   --input: var(--hairline);
-  --ring: var(--gold);
+  --ring: var(--emerald);
 
   --radius: 0px;
 }

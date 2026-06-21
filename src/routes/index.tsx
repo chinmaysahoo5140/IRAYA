@@ -46,32 +46,34 @@ function HomePage() {
       <Navbar />
 
       {/* HERO */}
-      <section className="relative h-screen w-screen overflow-hidden bg-gradient-to-br from-stone-100 via-amber-50 to-stone-200">
-        <div className="absolute inset-0 opacity-30" style={{
-          backgroundImage: "radial-gradient(circle at 20% 30%, rgba(180,140,90,0.3), transparent 50%), radial-gradient(circle at 80% 70%, rgba(60,40,30,0.2), transparent 50%)"
+      <section className="relative min-h-[90vh] lg:h-screen w-screen overflow-hidden bg-gradient-to-br from-sage via-ivory to-stone-100 flex flex-col lg:flex-row items-center pt-16">
+        <div className="absolute inset-0 opacity-40 pointer-events-none" style={{
+          backgroundImage: "radial-gradient(circle at 10% 20%, rgba(40,80,60,0.12), transparent 45%), radial-gradient(circle at 90% 80%, rgba(200,150,80,0.08), transparent 45%)"
         }} />
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-charcoal text-center px-6">
+        
+        {/* Left column: content */}
+        <div className="relative z-10 flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-16 lg:py-0 text-foreground">
           <Reveal>
-            <div className="text-[11px] tracking-luxury uppercase text-mute">
+            <div className="text-[11px] tracking-luxury uppercase text-emerald font-semibold">
               Bags &amp; Footwear · MMXXVI
             </div>
           </Reveal>
           <Reveal delay={150}>
-            <h1 className="mt-8 font-serif text-6xl md:text-8xl tracking-luxury leading-[0.95]">
+            <h1 className="mt-6 font-serif text-5xl sm:text-7xl md:text-8xl tracking-luxury leading-[0.95] text-emerald">
               IRAYA
             </h1>
           </Reveal>
           <Reveal delay={300}>
-            <p className="mt-6 max-w-md text-base md:text-lg font-light text-foreground/75">
-              Handcrafted bags and footwear, made in India. Designed for the way you walk through the world.
+            <p className="mt-6 max-w-lg text-base md:text-lg font-light text-foreground/80 leading-relaxed">
+              Handcrafted bags and footwear, made in India. Experience slow, conscious luxury with our masterfully created emerald resin and marble clutches.
             </p>
           </Reveal>
           <Reveal delay={450}>
-            <div className="mt-10 flex flex-col sm:flex-row gap-3">
+            <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
                 to="/collection"
                 search={{ category: "bags" }}
-                className="inline-flex items-center justify-center gap-3 bg-charcoal text-ivory px-8 py-3.5 text-[11px] tracking-luxury uppercase hover:bg-gold transition-colors duration-500"
+                className="inline-flex items-center justify-center gap-3 bg-emerald text-ivory px-8 py-3.5 text-[11px] tracking-luxury uppercase hover:bg-emerald-soft transition-colors duration-500 shadow-sm"
               >
                 Shop Bags
                 <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.25} />
@@ -79,11 +81,29 @@ function HomePage() {
               <Link
                 to="/collection"
                 search={{ category: "footwear" }}
-                className="inline-flex items-center justify-center gap-3 border border-charcoal text-charcoal px-8 py-3.5 text-[11px] tracking-luxury uppercase hover:bg-charcoal hover:text-ivory transition-colors duration-500"
+                className="inline-flex items-center justify-center gap-3 border border-emerald text-emerald px-8 py-3.5 text-[11px] tracking-luxury uppercase hover:bg-emerald hover:text-ivory transition-colors duration-500"
               >
                 Shop Footwear
                 <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.25} />
               </Link>
+            </div>
+          </Reveal>
+        </div>
+
+        {/* Right column: visual */}
+        <div className="flex-1 w-full h-[50vh] lg:h-full min-h-[400px] lg:min-h-screen relative overflow-hidden self-stretch flex items-center justify-center bg-sage/20">
+          <div className="absolute inset-0 bg-gradient-to-t from-sage/40 via-transparent to-transparent z-10 pointer-events-none" />
+          <Reveal className="w-full h-full" delay={200}>
+            <div className="w-full h-full overflow-hidden relative group">
+              <img
+                src="/iraya-green-clutch.png"
+                alt="IRAYA Emerald Green Handcrafted Clutch"
+                className="w-full h-full object-cover img-hover"
+              />
+              <div className="absolute bottom-8 right-8 z-20 bg-ivory/90 backdrop-blur-md px-6 py-4 shadow-sm border border-hairline/25">
+                <p className="font-serif text-lg text-emerald">The Emerald Resin Clutch</p>
+                <p className="text-[10px] tracking-widest uppercase text-mute mt-1">Limited Edition · Atelier Exclusive</p>
+              </div>
             </div>
           </Reveal>
         </div>
@@ -100,18 +120,18 @@ function HomePage() {
           </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
-              { slug: "bags", label: "Bags", grad: "from-amber-100 via-stone-100 to-amber-200" },
-              { slug: "footwear", label: "Footwear", grad: "from-stone-200 via-stone-100 to-amber-100" },
+              { slug: "bags", label: "Bags", grad: "from-sage via-ivory to-emerald/10" },
+              { slug: "footwear", label: "Footwear", grad: "from-emerald/5 via-sage to-ivory" },
             ].map((c, i) => (
               <Reveal key={c.slug} delay={i * 80}>
                 <Link to="/collection" search={{ category: c.slug as "bags" | "footwear" }} className="group block">
                   <div className={`relative overflow-hidden aspect-[5/4] bg-gradient-to-br ${c.grad} flex items-center justify-center`}>
                     <div className="text-center">
                       <div className="text-[11px] tracking-luxury uppercase text-mute">Shop</div>
-                      <div className="mt-3 font-serif text-5xl md:text-6xl text-charcoal group-hover:text-gold transition-colors duration-500">
+                      <div className="mt-3 font-serif text-5xl md:text-6xl text-emerald group-hover:text-emerald-soft transition-colors duration-500">
                         {c.label}
                       </div>
-                      <div className="mt-6 inline-flex items-center gap-2 text-[11px] tracking-luxury uppercase text-charcoal/70 group-hover:text-gold">
+                      <div className="mt-6 inline-flex items-center gap-2 text-[11px] tracking-luxury uppercase text-emerald/75 group-hover:text-emerald-soft">
                         Explore <ArrowRight className="h-3 w-3" strokeWidth={1.25} />
                       </div>
                     </div>
