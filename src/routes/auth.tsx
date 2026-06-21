@@ -3,6 +3,7 @@ import { z } from "zod";
 import { useState, type FormEvent } from "react";
 import { Navbar } from "@/component/iraya/Navbar";
 import { Footer } from "@/component/iraya/Footer";
+import { PasswordInput } from "@/component/ui/password-input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { precheckLogin, recordLogin, precheckSignup } from "@/lib/security.functions";
@@ -261,7 +262,13 @@ function AuthPage() {
                   <Input name="full_name" label="Full name" required />
                 )}
                 <Input name="email" label="Email" type="email" required />
-                <Input name="password" label="Password" type="password" required />
+                <Input
+                  name="password"
+                  label="Password"
+                  type="password"
+                  required
+                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                />
                 {/* Honeypot — hidden from humans, bots fill it */}
                 <input
                   type="text"
@@ -325,16 +332,37 @@ function AuthPage() {
   );
 }
 
-function Input({ name, label, type = "text", required = false }: { name: string; label: string; type?: string; required?: boolean }) {
+function Input({ 
+  name, 
+  label, 
+  type = "text", 
+  required = false, 
+  autoComplete 
+}: { 
+  name: string; 
+  label: string; 
+  type?: string; 
+  required?: boolean; 
+  autoComplete?: string;
+}) {
   return (
     <label className="block">
       <span className="block text-[11px] tracking-wide-2 uppercase text-mute mb-2">{label}</span>
-      <input
-        name={name}
-        type={type}
-        required={required}
-        className="w-full bg-transparent hairline-b py-2 text-sm focus:outline-none focus:border-charcoal"
-      />
+      {type === "password" ? (
+        <PasswordInput
+          name={name}
+          required={required}
+          autoComplete={autoComplete}
+        />
+      ) : (
+        <input
+          name={name}
+          type={type}
+          required={required}
+          autoComplete={autoComplete}
+          className="w-full bg-transparent hairline-b py-2 text-sm focus:outline-none focus:border-charcoal"
+        />
+      )}
     </label>
   );
 }

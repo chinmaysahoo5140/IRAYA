@@ -2,6 +2,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/component/iraya/Navbar";
 import { Footer } from "@/component/iraya/Footer";
+import { PasswordInput } from "@/component/ui/password-input";
 import { 
   get2faStatusServerFn, 
   setup2faServerFn, 
@@ -220,20 +221,18 @@ function SecurityPage() {
               <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
                 <label className="block">
                   <span className="block text-[11px] tracking-wide-2 uppercase text-mute mb-2">New Password</span>
-                  <input
+                  <PasswordInput
                     name="password"
-                    type="password"
                     required
-                    className="w-full bg-transparent hairline-b py-2 text-sm focus:outline-none focus:border-charcoal"
+                    autoComplete="new-password"
                   />
                 </label>
                 <label className="block">
                   <span className="block text-[11px] tracking-wide-2 uppercase text-mute mb-2">Confirm New Password</span>
-                  <input
+                  <PasswordInput
                     name="confirm_password"
-                    type="password"
                     required
-                    className="w-full bg-transparent hairline-b py-2 text-sm focus:outline-none focus:border-charcoal"
+                    autoComplete="new-password"
                   />
                 </label>
                 <button
